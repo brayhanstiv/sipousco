@@ -1,0 +1,48 @@
+RewriteCond %{QUERY_STRING} (;|<|>|’|”|\)|%0A|%0D|%22|%27|%3C|%3E|%00|%27-%27).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark) [NC,OR]
+RewriteCond %{QUERY_STRING} \.\./\.\. [OR]
+RewriteCond %{QUERY_STRING} (localhost|loopback|127\.0\.0\.1) [NC,OR]
+RewriteCond %{QUERY_STRING} \.[a-z0-9] [NC,OR]
+RewriteCond %{QUERY_STRING} (<|>|’|%0A|%0D|%27|%3C|%3E|%00) [NC]
+
+RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+RewriteCond %{HTTP_USER_AGENT} ^(java|curl|wget) [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} (winhttp|HTTrack|clshttp|archiver|loader|email|harvest|extract|grab|miner) [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} (libwww-perl|curl|wget|python|nikto|scan) [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} (<|>|’|%0A|%0D|%27|%3C|%3E|%00) [NC]
+RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=http:// [OR]
+RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=(\.\.//?)+ [OR]
+RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=/([a-z0-9_.]//?)+ [NC]
+RewriteRule .* - [F]
+
+RewriteEngine On
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php
+</IfModule>
+
+RewriteRule .*\.()$ - [F,NC]
+
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http://sipousco.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://sipousco.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.sipousco.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.sipousco.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://sipousco.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://sipousco.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.sipousco.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.sipousco.com$      [NC]
+RewriteRule .*\.(jpg|jpeg|gif|png|bmp)$ https://www.sipousco.com [R,NC]
+
+#RewriteEngine On
+#RewriteCond %{ENV:HTTPS} !on [NC]
+#RewriteCond %{SERVER_PORT} 3306
+#RewriteRule ^(.*)$ https://www.sipousco.com/$1 [R=301,L,NE]
+
+RewriteEngine on
+RewriteCond %{HTTPS} !=on
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
